@@ -44,4 +44,9 @@ This project implements a RESTful API for performing transfers between accounts.
     "destinationAccount": "string",
     "amount": "decimal"
   }
+### 2. Get Account Details
+
+- **Endpoint**: `/account/{accountNumber}`
+- **Method**: `GET`
+
 
