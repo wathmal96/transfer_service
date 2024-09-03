@@ -21,8 +21,8 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public TransactionDto transfer(TransactionDto transactionDto) {
-        Account sourceAccount = accountRepo.getAccountByAccountNumber(transactionDto.getSourceAcc());
-        Account destinationAccount = accountRepo.getAccountByAccountNumber(transactionDto.getDestinationAcc());
+        Account sourceAccount = accountRepo.getAccountByAccountNumber(transactionDto.getSourceAccount());
+        Account destinationAccount = accountRepo.getAccountByAccountNumber(transactionDto.getDestinationAccount());
 
         if (sourceAccount == null || destinationAccount == null) {
             return null;
@@ -30,8 +30,8 @@ public class TransactionServiceImpl implements TransactionService {
 
         //store transaction
         if (sourceAccount.getBalance() > transactionDto.getAmount()) {
-            Transaction transaction = transactionRepo.saveTransaction(new Transaction(transactionDto.getSourceAcc(),
-                    transactionDto.getDestinationAcc(), transactionDto.getAmount()));
+            Transaction transaction = transactionRepo.saveTransaction(new Transaction(transactionDto.getSourceAccount(),
+                    transactionDto.getDestinationAccount(), transactionDto.getAmount()));
 
             //decrement amount from source account
             sourceAccount.setBalance(sourceAccount.getBalance() - transactionDto.getAmount());
@@ -39,8 +39,8 @@ public class TransactionServiceImpl implements TransactionService {
             //increment destination account
             destinationAccount.setBalance(destinationAccount.getBalance() + transactionDto.getAmount());
 
-            return new TransactionDto(transaction.getSourceAccountNUmber(),
-                    transactionDto.getDestinationAcc(), transactionDto.getAmount());
+            return new TransactionDto(transaction.getSourceAccountNumber(),
+                    transactionDto.getDestinationAccount(), transactionDto.getAmount());
         }
         return null;
     }

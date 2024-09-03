@@ -10,7 +10,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class Transaction {
-    String sourceAccountNUmber;
+    String sourceAccountNumber;
     String destinationAccountNumber;
     Double amount;
 }

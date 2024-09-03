@@ -10,7 +10,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class TransactionDto {
-    String sourceAcc;
-    String destinationAcc;
+    String sourceAccount;
+    String destinationAccount;
     double amount;
 }
