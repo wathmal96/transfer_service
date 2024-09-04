@@ -35,7 +35,7 @@ This project implements a RESTful API for performing transfers between accounts.
 
 ### 1. Transfer Funds
 
-- **Endpoint**: `/transfer/make-transaction`
+- **Endpoint**: `/api/transactions`
 - **Method**: `POST`
 - **Request Body**:
   ```json
@@ -46,7 +46,7 @@ This project implements a RESTful API for performing transfers between accounts.
   }
 ### 2. Get Account Details
 
-- **Endpoint**: `/account/{accountNumber}`
+- **Endpoint**: `/api/accounts/{accountNumber}`
 - **Method**: `GET`
 
 
