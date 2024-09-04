@@ -6,6 +6,7 @@ import lk.dialog.transfer.model.Transaction;
 import lk.dialog.transfer.repo.AccountRepo;
 import lk.dialog.transfer.repo.TransactionRepo;
 import lk.dialog.transfer.service.TransactionService;
+import lk.dialog.transfer.util.Converter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,29 +15,27 @@ import org.springframework.stereotype.Service;
 public class TransactionServiceImpl implements TransactionService {
     private final AccountRepo accountRepo;
     private final TransactionRepo transactionRepo;
+    private final Converter converter;
 
     @Override
     public TransactionDto transfer(TransactionDto transactionDto) {
+        if (transactionDto.getSourceAccount().equals(transactionDto.getDestinationAccount()))
+            return null;
         Account sourceAccount = accountRepo.getAccountByAccountNumber(transactionDto.getSourceAccount());
         Account destinationAccount = accountRepo.getAccountByAccountNumber(transactionDto.getDestinationAccount());
 
-        if (sourceAccount == null || destinationAccount == null) {
+        if (sourceAccount==null || destinationAccount==null || sourceAccount.getBalance()<transactionDto.getAmount())
             return null;
-        }
         //store transaction
-        if (sourceAccount.getBalance() >= transactionDto.getAmount()) {
-            Transaction transaction = transactionRepo.saveTransaction(new Transaction(transactionDto.getSourceAccount(),
-                    transactionDto.getDestinationAccount(), transactionDto.getAmount()));
+        Transaction transaction = transactionRepo.saveTransaction(converter.transactionDtoToModel(transactionDto));
 
-            //decrement amount from source account
-            sourceAccount.setBalance(sourceAccount.getBalance() - transaction.getAmount());
+        //decrement amount from source account
+        sourceAccount.setBalance(sourceAccount.getBalance() - transaction.getAmount());
 
-            //increment destination account
-            destinationAccount.setBalance(destinationAccount.getBalance() + transaction.getAmount());
+        //increment destination account
+        destinationAccount.setBalance(destinationAccount.getBalance() + transaction.getAmount());
 
-            return new TransactionDto(transaction.getSourceAccount(),
-                    transaction.getDestinationAccount(), transaction.getAmount());
-        }
-        return null;
+        return converter.transactionToDto(transaction);
+
     }
 }
