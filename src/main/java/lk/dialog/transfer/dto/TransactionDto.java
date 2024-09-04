@@ -1,14 +1,14 @@
 package lk.dialog.transfer.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public class TransactionDto {
     String sourceAccount;
     String destinationAccount;

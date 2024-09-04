@@ -1,16 +1,16 @@
 package lk.dialog.transfer.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public class Transaction {
-    String sourceAccountNumber;
-    String destinationAccountNumber;
+    String sourceAccount;
+    String destinationAccount;
     Double amount;
 }
