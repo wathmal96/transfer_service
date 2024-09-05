@@ -11,5 +11,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AccountDto {
     private String accountNumber;
-    private double amount;
+    private double balance;
 }

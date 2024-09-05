@@ -6,7 +6,7 @@ import lk.dialog.transfer.model.Transaction;
 import lk.dialog.transfer.repo.AccountRepo;
 import lk.dialog.transfer.repo.TransactionRepo;
 import lk.dialog.transfer.service.TransactionService;
-import lk.dialog.transfer.util.Converter;
+import lk.dialog.transfer.util.impl.ConverterImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,19 +15,20 @@ import org.springframework.stereotype.Service;
 public class TransactionServiceImpl implements TransactionService {
     private final AccountRepo accountRepo;
     private final TransactionRepo transactionRepo;
-    private final Converter converter;
+    private final ConverterImpl converterImpl;
 
     @Override
     public TransactionDto transfer(TransactionDto transactionDto) {
-        if (transactionDto.getSourceAccount().equals(transactionDto.getDestinationAccount()))
-            return null;
+        if (isInvalidDestination(transactionDto)) return null;
+        if (isInvalidAmount(transactionDto)) return null;
+
         Account sourceAccount = accountRepo.getAccountByAccountNumber(transactionDto.getSourceAccount());
         Account destinationAccount = accountRepo.getAccountByAccountNumber(transactionDto.getDestinationAccount());
 
-        if (sourceAccount==null || destinationAccount==null || sourceAccount.getBalance()<transactionDto.getAmount())
-            return null;
+        if (isInvalidData(sourceAccount, destinationAccount, transactionDto)) return null;
+
         //store transaction
-        Transaction transaction = transactionRepo.saveTransaction(converter.transactionDtoToModel(transactionDto));
+        Transaction transaction = transactionRepo.saveTransaction(converterImpl.transactionDtoToModel(transactionDto));
 
         //decrement amount from source account
         sourceAccount.setBalance(sourceAccount.getBalance() - transaction.getAmount());
@@ -35,7 +36,20 @@ public class TransactionServiceImpl implements TransactionService {
         //increment destination account
         destinationAccount.setBalance(destinationAccount.getBalance() + transaction.getAmount());
 
-        return converter.transactionToDto(transaction);
+        return converterImpl.transactionToDto(transaction);
+    }
 
+    private boolean isInvalidData(Account sourceAccount, Account destinationAccount, TransactionDto transactionDto) {
+        return sourceAccount == null ||
+                destinationAccount == null ||
+                transactionDto.getAmount() > sourceAccount.getBalance();
+    }
+
+    private boolean isInvalidDestination(TransactionDto transactionDto) {
+        return transactionDto.getSourceAccount().equals(transactionDto.getDestinationAccount());
+    }
+
+    private boolean isInvalidAmount(TransactionDto transactionDto) {
+        return transactionDto.getAmount() <= 0;
     }
 }
